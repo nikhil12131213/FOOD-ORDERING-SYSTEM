@@ -1,0 +1,327 @@
+#include <stdio.h>
+#include <string.h>
+
+struct details {char uname[100]; char password[100];};                      // Structure to store the user details
+
+// Structure to store the hotels and their food details
+struct hotels {char hotel[100]; char first_food[20]; char second_food[20]; char third_food[20];	char fourth_food[25];
+               int first, second, third, fourth;};
+
+struct hotels m[5];
+struct details s[100];
+
+void signup();                                               // Function to get the input for new account.
+
+void account_check();                                        // Function to check whether the account is already existed or not
+
+int validate();                                              // Function to validate all the input fields.
+void login();
+void cart();
+void search_by_hotels();                                      // Function to implement the search by hotels
+void search_by_food();
+void food_order(int food);
+
+void hotel_initialize();                                     // Function to initialize the hotels and food structure dynamically
+void hotels(int hotel_choice);
+int  wrong = 1, i, j = 0, caps = 0; small = 0, special = 0, numbers = 0;
+int  x, choice, ch, food, hotel_id;
+char temp_name[100], temp_password1[100], temp_password2[100];
+int  total = 0, food_choice, n, hotel_choice, search_choice, confirm;
+
+int main()
+{	while (1) {
+		printf("\n\nWelcome to Food Ordering System\n\n");
+		printf(" 1)SIGNUP\n 2)LOGIN\n 3)EXIT\n\n");
+		printf("Enter your choice:\t");
+		scanf("%d", &choice);
+		switch (choice) {
+		case 1: {
+			signup();
+			break;}
+		case 2: {
+			login();
+			break;}
+		case 3: {
+			return 0;}
+		default: {
+			printf("\nPlease Enter the valid choice\n");
+			break;} }
+        } }
+
+void signup()
+{
+	printf("Enter Your name:\t");
+	scanf("%s", temp_name);
+
+	printf("Enter Password:\t");
+	scanf("%s", temp_password1);
+
+	printf("Confirm Password:\t");
+	scanf("%s", temp_password2);
+
+	x = validate();
+	if (x == 1)
+		account_check();
+}
+
+int validate()
+{
+	for (i = 0; temp_name[i] != '\0'; i++) {
+		if (!((temp_name[i] >= 'a' && temp_name[i] <= 'z') || (temp_name[i] >= 'A' && temp_name[i] <= 'Z') || temp_name[i] == ' ' )) {
+			printf("\nPlease Enter the valid Name\n");
+			wrong = 0;}}
+	if (wrong == 1) {
+
+			if (!strcmp(temp_password1,temp_password2)) {
+				if (strlen(temp_password1) >= 8 && strlen(temp_password1) <= 12) {
+					caps = 0;
+					small = 0;
+					numbers = 0;
+					special = 0;
+					for (i = 0; temp_password1[i] != '\0';i++) {
+						if (temp_password1[i] >= 'A' && temp_password1[i] <= 'Z')
+							caps++;
+						else if (temp_password1[i] >= 'a' && temp_password1[i] <= 'z')
+							small++;
+						else if (temp_password1[i] >= '0' && temp_password1[i] <= '9')
+							numbers++;
+						else if (temp_password1[i] == '@' || temp_password1[i] == '&' || temp_password1[i] == '#' || temp_password1[i] == '*')
+							special++;
+					}
+					if (caps >= 1 && small >= 1 && numbers >= 1 && special >= 1)
+									return 1;
+					else {
+						printf("\n\nPlease Enter the strong password, Your password must contain at least 1 uppercase, 1 Lowercase, one Number and 1 special character(@/&/#/*)\n\n");
+						return 0;}
+				}
+				else {
+					printf("\nYour Password is very short\nLength must between 8 to 12\n\n");
+					return 0;}
+			}
+			else {
+				printf("\nPassword Mismatch\n\n");
+				return 0;}
+		}
+	}
+
+void account_check()
+{
+	for (i = 0; i < 100; i++) {
+		if (!(strcmp(temp_name, s[i].uname) && strcmp(temp_password1,s[i].password))) {
+			printf("\n\nAccount AlreadyExisted. Please Login!!!\n\n");
+			main();
+		}
+	}
+	//if account does not already existed, it creates a new one with new inputs
+	if (i == 100) {
+		strcpy(s[j].uname, temp_name);
+		strcpy(s[j].password, temp_password1);
+		j++;
+		printf("\n\n\nAccount Successfully Created!!\n\n");
+	}
+}
+
+// Function to Login the users
+void login()
+{
+	printf("\n\nLOGIN\n\nEnter Your Name:\t");
+	scanf("%s", temp_name);
+	printf("Enter Your Password:\t");
+	scanf("%s", temp_password1);
+	for (i = 0; i < 100; i++) {
+		// Check whether the input name is already existed or not
+		if (!strcmp(s[i].uname, temp_name)) {
+			// Check whether the password is matched with the email or not
+			if (!strcmp(s[i].password, temp_password1)) {
+				printf("\n\nWelcome %s, .", s[i].uname);
+				printf(" Your are successfully logged in.\n\nWe Provide two ways of search\n 1) Search By Hotels\n 2) Search by Food\n 3) Exit\n\nPlease Enter your choice:\t");
+				scanf("%d", &search_choice);
+
+				// Getting the input whether the user are going to search Order by hotels or search order by food.
+				switch (search_choice) {
+				case 1: {
+					search_by_hotels();
+					break;}
+				case 2: {
+					search_by_food();
+					break;}
+				case 3: {
+					return;}
+				default: {
+					printf("Please Enter the valid choice\n\n");
+					break;}
+				}
+			}
+			else {
+				printf("\n\nInvalid Password! Please Enter the correct password\n\n");
+				main();}
+		}
+		else {
+			printf("\n\nAccount doesn't exist, Please signup!!\n\n");
+			main();}
+	}
+}
+
+void hotel_initialize()
+{
+	strcpy(m[1].hotel, "Mayur Restaurant");
+	strcpy(m[1].first_food, "Sandwich");
+	strcpy(m[1].second_food, "Pizza");
+	strcpy(m[1].third_food, "Fried_Rice");
+	m[1].first = 70;
+	m[1].second = 150;
+	m[1].third = 100;
+
+	strcpy(m[2].hotel, "King Chilly");
+	strcpy(m[2].first_food, "Panner Chilly");
+	strcpy(m[2].second_food, "Noodles");
+	strcpy(m[2].third_food, "Chicken Rice");
+	m[2].first = 100;
+	m[2].second = 80;
+	m[2].third = 80;
+
+	strcpy(m[3].hotel, "Maggi Center");
+	strcpy(m[3].first_food, "Cheese Maggi");
+	strcpy(m[3].second_food, "Kurkure Bhel");
+	strcpy(m[3].third_food, "American Chop suey");
+	m[3].first = 60;
+	m[3].second = 50;
+	m[3].third = 90;
+}
+
+void search_by_hotels()
+{
+	hotel_initialize();
+	printf("\n\nPlease Choose the hotels:\n\n 1) %s\n 2) %s\n 3) %s",m[1].hotel,m[2].hotel, m[3].hotel);
+	printf("\n 4) Exit\n\nPlease Enter the choice:\t");
+	scanf("%d", &hotel_choice);
+	if (hotel_choice > 4) {
+		printf("Please Enter the valid choice\n\n");
+		search_by_hotels();
+	}
+	else if (hotel_choice == 4)
+		return;
+	else
+		hotels(hotel_choice);
+}
+
+void hotels(int hotel_choice)                                                    // Function to implement the hotel
+{
+	total = 0;
+	while (1) {
+		// Displays the list of foods available in selected hotel
+		printf("\n\nList of foods available in %s\n\n ", m[hotel_choice].hotel);
+
+		printf(" 1) %s\tRs: %d\n 2)%s\tRs: %d\n 3) %s\tRs: %d\n", m[hotel_choice].first_food, m[hotel_choice].first, m[hotel_choice].second_food, m[hotel_choice].second, m[hotel_choice].third_food, m[hotel_choice].third);
+
+		printf("4) Cart\n 5) Go to Previous Option\n\nPlease Enter Your Choice\t");
+		scanf("%d", &food_choice);
+
+		// Get the input for no of foods to calculate the total amount
+		if (food_choice == 1) {
+			printf("Please Enter the Count of %s\t", m[hotel_choice].first_food);
+			scanf("%d", &n);
+			total = total + (n * m[hotel_choice].first);
+		}
+		else if (food_choice == 2) {
+			printf("Please Enter the Count of %s\t", m[hotel_choice].second_food);
+			scanf("%d", &n);
+			total = total + (n * m[hotel_choice].second);
+		}
+		else if (food_choice == 3) {
+			printf("Please Enter the Count of %s\t", m[hotel_choice].third_food);
+			scanf("%d", &n);
+			total = total + (n * m[hotel_choice].third);
+		}
+
+		// Once the user, completed their order, they can go to cart by giving choice as 4.
+		else if (food_choice == 4) {
+			cart();
+		}
+		else if (food_choice == 5) {
+			search_by_hotels();
+		}
+		else {
+			printf("Please Enter the valid Choice\n\n");
+		}
+	}
+}
+
+void search_by_food()
+{
+	total = 0;
+	// Initialize all the hotels and their foods
+	hotel_initialize();
+	while (1) {
+		printf("\n\nPlease choose the food:\n\n");
+
+		printf(" 1) %s\tRs.%d\n 2) %s\tRs.%d\n 3) %s\tRs.%d\n 4) %s\tRs.%d\n 5) %s\tRs.%d\n 6) %s\tRs.%d\n 7) %s\tRs.%d\n 8) %s\tRs.%d\n 9) %s\tRs.%d\n",m[1].first_food, m[1].first,m[1].second_food, m[1].second,m[1].third_food, m[1].third,m[2].first_food, m[2].first,m[2].second_food, m[2].second,m[2].third_food, m[2].third,m[3].first_food, m[3].first,m[3].second_food, m[3].second,m[3].third_food,m[3].third);
+
+		printf("10) Cart\n 11) Exit");
+		printf("\nPlease Enter Your Choice:\t");
+		scanf("%d", &food);
+		if (food > 11) {
+			printf("Please Enter the valid choice\n\n");
+			search_by_food();}
+		else if (food == 10)                               // Moves to the cart functionality
+			cart();
+		else if (food == 11)
+			return;
+		else                                               // Call food_order functionality to get the no of foods and to calculate the total amount of the order.
+			food_order(food);
+	}
+}
+
+void food_order(int food)
+{
+	if (food >= 1 && food <= 3)
+		hotel_id = 1;
+	else if (food >= 4 && food <= 6)
+		hotel_id = 2;
+	else
+		hotel_id = 3;
+	if ((food % 3) == 1) {
+		printf("Please Enter the Count of %s\t", m[hotel_id].first_food);
+		scanf("%d", &n);
+		total = total + (n * m[hotel_id].first);
+	}
+	else if ((food % 3) == 2) {
+		printf("Please Enter the Count of %s\t",m[hotel_id].second_food);
+		scanf("%d", &n);
+		total = total + (n * m[hotel_id].second);
+	}
+	else if ((food % 3) == 0) {
+		printf("Please Enter the Count of %s\t",m[hotel_id].third_food);
+		scanf("%d", &n);
+		total = total + (n * m[hotel_id].third);
+	}
+}
+
+// Function to implement the cart
+void cart()
+{
+	printf("\n\n\n\n--------------Cart----------------");
+	printf("\nYour Total Order Amount is %d\n", total);
+	printf("\n\nDo You wish to order (Yes = 1/ No = 0):");
+	scanf("%d", &ch);
+	if (ch == 1) {
+		printf("\n\nThank You for your order!! Your Food is on the way. Welcome again!!\n\n");
+		return 0;
+	}
+	else if (ch == 0) {
+		printf("Do You want to exit (1) or Go back (0)");
+		scanf("%d", &confirm);
+		if (confirm == 1) {
+			printf("\n\nOops! Your order is cancelled!! Exiting..\nThank You visit again!\n");
+			return;
+		}
+		else {
+			printf("\n\nThank You\n\n");
+			login();
+		}
+	}
+	else {
+		printf("\n\nPlease Enter the correct choice\n\n");
+		cart();
+	}
+}
